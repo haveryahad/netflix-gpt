@@ -4,16 +4,23 @@ import { checkValidData } from "../utils/validate";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/redux/userSlice";
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isEmailValid, setisEmailValid] = useState(true);
   const [isPasswordValid, setisPasswordValid] = useState(true);
   const [isInvalidCreds, setIsInvalidCreds] = useState(false);
 
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleSignInForm = () => {
     setIsSignUp(!isSignUp);
@@ -41,7 +48,29 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name.current.value,
+            photoURL:
+              "https://occ-0-2164-2186.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABYLK4Zg7vrdcehLnuGbHtd7uQFfH1EDdo5KUF-_Rv5qKJoXV6Juz1I8S2m8taKEFZ-ZUfICk3E61-T9On8Nc6lbxOcnE9dAnvw.png?r=85b",
+          })
+            .then(() => {
+              // Profile updated!
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+            })
+            .catch((error) => {
+              // An error occurred
+              // ...
+            });
           console.log(user);
+          navigate("/browse");
           // ...
         })
         .catch((error) => {
@@ -60,6 +89,7 @@ const Login = () => {
           // Signed in
           const user = userCredential.user;
           console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -88,6 +118,7 @@ const Login = () => {
         </h1>
         {isSignUp && (
           <input
+            ref={name}
             type="text"
             placeholder="Name"
             className="p-3 m-2 w-full rounded bg-gray-700 placeholder-gray-400 bg-opacity-80"
