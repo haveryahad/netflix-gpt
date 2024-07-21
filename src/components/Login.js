@@ -1,10 +1,16 @@
 import { useState, useRef } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isEmailValid, setisEmailValid] = useState(true);
   const [isPasswordValid, setisPasswordValid] = useState(true);
+  const [isInvalidCreds, setIsInvalidCreds] = useState(false);
 
   const email = useRef(null);
   const password = useRef(null);
@@ -15,13 +21,53 @@ const Login = () => {
     setisPasswordValid(true);
   };
   const handleButtonClick = () => {
+    setIsInvalidCreds(false);
     const { emailValid, passwordValid } = checkValidData(
       email.current.value,
       password.current.value
     );
     setisEmailValid(emailValid);
     setisPasswordValid(passwordValid);
-    console.log(isEmailValid, isPasswordValid);
+    console.log(emailValid, passwordValid);
+    if (!emailValid && !passwordValid) return;
+
+    if (isSignUp) {
+      //Sign Up logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    } else {
+      //Sign In logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setIsInvalidCreds(true);
+          console.log(errorCode, errorMessage);
+        });
+    }
   };
   return (
     <div>
@@ -75,6 +121,12 @@ const Login = () => {
             placeholder="Confirm Password"
             className="p-3 m-2 w-full rounded bg-gray-700 placeholder-gray-400 bg-opacity-80"
           />
+        )}
+        {isInvalidCreds && (
+          <p className="px-3 mx-1 text-red-600 font-semibold drop-shadow-xl">
+            You have entered invalid credentials. Please check your email and
+            password again.
+          </p>
         )}
         <button
           className="p-2 m-2 bg-red-700 block w-full rounded"
