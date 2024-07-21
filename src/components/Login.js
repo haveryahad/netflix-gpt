@@ -10,6 +10,7 @@ import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/redux/userSlice";
+import { DEFAULT_AVATAR, LOGIN_BACKGROUND } from "../utils/constants";
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isEmailValid, setisEmailValid] = useState(true);
@@ -50,8 +51,7 @@ const Login = () => {
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name.current.value,
-            photoURL:
-              "https://occ-0-2164-2186.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABYLK4Zg7vrdcehLnuGbHtd7uQFfH1EDdo5KUF-_Rv5qKJoXV6Juz1I8S2m8taKEFZ-ZUfICk3E61-T9On8Nc6lbxOcnE9dAnvw.png?r=85b",
+            photoURL: { DEFAULT_AVATAR },
           })
             .then(() => {
               // Profile updated!
@@ -67,11 +67,7 @@ const Login = () => {
             })
             .catch((error) => {
               // An error occurred
-              // ...
             });
-          console.log(user);
-          navigate("/browse");
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -87,9 +83,6 @@ const Login = () => {
       )
         .then((userCredential) => {
           // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -104,8 +97,8 @@ const Login = () => {
       <Header />
       <div className="absolute">
         <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/0552717c-9d8c-47bd-9640-4f4efa2de663/537e2c5e-c750-4d4c-9f7a-e66fe93eb977/IN-en-20240701-POP_SIGNUP_TWO_WEEKS-perspective_WEB_b00eeb83-a7e8-4b5b-8ff7-86ed92c51caf_small.jpg"
-          srcSet="https://assets.nflxext.com/ffe/siteui/vlv3/0552717c-9d8c-47bd-9640-4f4efa2de663/537e2c5e-c750-4d4c-9f7a-e66fe93eb977/IN-en-20240701-POP_SIGNUP_TWO_WEEKS-perspective_WEB_b00eeb83-a7e8-4b5b-8ff7-86ed92c51caf_small.jpg 1000w, https://assets.nflxext.com/ffe/siteui/vlv3/0552717c-9d8c-47bd-9640-4f4efa2de663/537e2c5e-c750-4d4c-9f7a-e66fe93eb977/IN-en-20240701-POP_SIGNUP_TWO_WEEKS-perspective_WEB_b00eeb83-a7e8-4b5b-8ff7-86ed92c51caf_medium.jpg 1500w, https://assets.nflxext.com/ffe/siteui/vlv3/0552717c-9d8c-47bd-9640-4f4efa2de663/537e2c5e-c750-4d4c-9f7a-e66fe93eb977/IN-en-20240701-POP_SIGNUP_TWO_WEEKS-perspective_WEB_b00eeb83-a7e8-4b5b-8ff7-86ed92c51caf_large.jpg 1800w"
+          src={`${LOGIN_BACKGROUND}_small.jpg`}
+          srcSet={`${LOGIN_BACKGROUND}_small.jpg 1000w, ${LOGIN_BACKGROUND}_medium.jpg 1500w, ${LOGIN_BACKGROUND}_large.jpg 1800w`}
           alt="Background"
         />
       </div>

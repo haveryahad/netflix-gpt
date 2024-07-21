@@ -15,7 +15,10 @@
     - Created Redux Store with User Slice
     - Implemented Sign Out
     - Update Profile API
-    - Fetch Movies from TMDB
+    - BugFix: Blank displayName of newly Signed Up User
+    - BugFix: Proper routing to prevent unauthorised use from accessing Browse page
+    - Unsubscribed to the onAuthStateChanged callback
+    - Code Cleanup for best practice
 
 # Features
 
